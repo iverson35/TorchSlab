@@ -15,7 +15,6 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
-import net.minecraft.world.level.material.Material;
 import net.minecraft.world.item.Items;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
@@ -118,8 +117,8 @@ public class VanillaCompat implements ITorchSlabCompat
 
 //		pad_lantern = registerBlock(() -> new BlockPadLantern(Block.Properties.create(Material.MISCELLANEOUS).doesNotBlockMovement().hardnessAndResistance(0.0F).sound(SoundType.LANTERN).func_235838_a_((p_235454_0_) -> {return 15; }).notSolid(), 'l'), "pad_lantern");
 
-		pad_lantern = registerBlock("pad_lantern", () -> new BlockPadLantern((BlockBehaviour.Properties.of(Material.PLANT).instabreak().sound(SoundType.LANTERN).noOcclusion().lightLevel((p_50878_) -> { return 15; })), 'l'));
-		pad_soul_lantern = registerBlock("pad_soul_lantern", () -> new BlockPadLantern((BlockBehaviour.Properties.of(Material.PLANT).instabreak().sound(SoundType.LANTERN).noOcclusion().lightLevel((p_50878_) -> { return 10; })), 's'));
+		pad_lantern = registerBlock("pad_lantern", () -> new BlockPadLantern((BlockBehaviour.Properties.of().instabreak().sound(SoundType.LANTERN).noOcclusion().lightLevel((p_50878_) -> { return 15; })), 'l'));
+		pad_soul_lantern = registerBlock("pad_soul_lantern", () -> new BlockPadLantern((BlockBehaviour.Properties.of().instabreak().sound(SoundType.LANTERN).noOcclusion().lightLevel((p_50878_) -> { return 10; })), 's'));
 
 //		pad_soul_lantern = registerBlock(() -> new BlockPadLantern(Block.Properties.create(Material.MISCELLANEOUS).doesNotBlockMovement().hardnessAndResistance(0.0F).sound(SoundType.LANTERN).func_235838_a_((p_235454_0_) -> {return 15; }).notSolid(), 's'), "pad_soul_lantern");
 

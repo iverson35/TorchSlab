@@ -7,28 +7,13 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 
 
-import net.minecraft.world.level.block.AirBlock;
-import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.level.block.state.properties.Half;
 import net.minecraft.world.level.block.state.properties.SlabType;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.EndRodBlock;
-import net.minecraft.world.level.block.LiquidBlock;
-import net.minecraft.world.level.block.LadderBlock;
-import net.minecraft.world.level.block.RedstoneWallTorchBlock;
-import net.minecraft.world.level.block.SlabBlock;
-import net.minecraft.world.level.block.StairBlock;
-import net.minecraft.world.level.block.StoneButtonBlock;
-import net.minecraft.world.level.block.TorchBlock;
-import net.minecraft.world.level.block.VineBlock;
-import net.minecraft.world.level.block.WallSignBlock;
-import net.minecraft.world.level.block.WallTorchBlock;
-import net.minecraft.world.level.block.WebBlock;
-import net.minecraft.world.level.block.WoodButtonBlock;
 
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -164,8 +149,7 @@ public class BlockWallTorchSlab extends WallTorchBlock
 				|| state.getBlock() instanceof WebBlock
 				|| state.getBlock() instanceof VineBlock
 				|| state.getBlock() instanceof RedstoneWallTorchBlock
-				|| state.getBlock() instanceof StoneButtonBlock
-				|| state.getBlock() instanceof WoodButtonBlock
+				|| state.getBlock() instanceof ButtonBlock
 				)
 			return true;
 		

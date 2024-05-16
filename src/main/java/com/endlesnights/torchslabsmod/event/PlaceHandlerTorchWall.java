@@ -8,31 +8,13 @@ import com.endlesnights.torchslabsmod.TorchSlabsMod;
 import com.endlesnights.torchslabsmod.blocks.vanilla.BlockWallTorchSlab;
 import com.endlesnights.torchslabsmod.config.Config;
 import com.endlesnights.torchslabsmod.config.TorchSlabConfig;
-import com.mojang.math.Vector3d;
 
-import net.minecraft.world.level.block.AirBlock;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.EndRodBlock;
-import net.minecraft.world.level.block.LadderBlock;
-import net.minecraft.world.level.block.LiquidBlock;
-import net.minecraft.world.level.block.RedstoneWallTorchBlock;
+import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.Half;
 import net.minecraft.world.level.block.state.properties.SlabType;
 import net.minecraft.world.level.material.Fluids;
-import net.minecraft.world.level.block.SimpleWaterloggedBlock;
-import net.minecraft.world.level.block.SlabBlock;
-import net.minecraft.world.level.block.SoundType;
-import net.minecraft.world.level.block.StairBlock;
-import net.minecraft.world.level.block.StoneButtonBlock;
-import net.minecraft.world.level.block.TorchBlock;
-import net.minecraft.world.level.block.VineBlock;
-import net.minecraft.world.level.block.WallSignBlock;
-import net.minecraft.world.level.block.WallTorchBlock;
-import net.minecraft.world.level.block.WebBlock;
-import net.minecraft.world.level.block.WoodButtonBlock;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.resources.ResourceLocation;
@@ -41,6 +23,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent.RightClickBlock;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
@@ -68,8 +51,8 @@ public class PlaceHandlerTorchWall
 		BlockPos pos = event.getPos();
 		Direction face = event.getFace();
 		BlockPos placeAt = pos.relative(face);
-		Level world = event.getWorld();		
-		Player playerIn = event.getPlayer();
+		Level world = event.getLevel();		
+		Player playerIn = event.getEntity();
 		SoundType soundType;
 
 		Config.loadConfig(Config.SERVER, FMLPaths.CONFIGDIR.get().resolve("torchslabmod-server.toml").toString());
@@ -106,11 +89,11 @@ public class PlaceHandlerTorchWall
 				//world.setBlockAndUpdate(placeAt, block.defaultBlockState().setValue(WallTorchBlock.FACING, face).setValue(BlockWallTorchSlab.HALF, Half.BOTTOM));
 			}
 			
-			soundType = block.getSoundType(block.defaultBlockState(), world, pos, event.getPlayer());
+			soundType = block.getSoundType(block.defaultBlockState(), world, pos, event.getEntity());
 			world.playSound(null, pos.getX(), pos.getY(), pos.getZ(), soundType.getPlaceSound(), SoundSource.BLOCKS, soundType.getVolume(), soundType.getPitch() - 0.2F);
-			event.getPlayer().swing(event.getHand());
+			event.getEntity().swing(event.getHand());
 			
-			if(!event.getPlayer().isCreative())
+			if(!event.getEntity().isCreative())
 				held.shrink(1);
 			event.setCanceled(true);
 
@@ -120,9 +103,9 @@ public class PlaceHandlerTorchWall
 				&& (face != Direction.UP && face != Direction.DOWN)
 				&& (world.isEmptyBlock(placeAt) || world.getBlockState(placeAt).getBlock() == Blocks.WATER || world.getFluidState(placeAt).getType() == Fluids.FLOWING_WATER) )
 		{
-			soundType = block.getSoundType(block.defaultBlockState(), world, pos, event.getPlayer());
+			soundType = block.getSoundType(block.defaultBlockState(), world, pos, event.getEntity());
 			world.playSound(null, pos.getX(), pos.getY(), pos.getZ(), soundType.getPlaceSound(), SoundSource.BLOCKS, soundType.getVolume(), soundType.getPitch() - 0.2F);
-			event.getPlayer().swing(event.getHand());
+			event.getEntity().swing(event.getHand());
 			
 			if (block instanceof SimpleWaterloggedBlock)
 			{
@@ -134,7 +117,7 @@ public class PlaceHandlerTorchWall
 			else
 				world.setBlockAndUpdate(placeAt, block.defaultBlockState().setValue(WallTorchBlock.FACING, face).setValue(BlockWallTorchSlab.HALF, Half.BOTTOM));		
 			
-			if(!event.getPlayer().isCreative())
+			if(!event.getEntity().isCreative())
 				held.shrink(1);
 			event.setCanceled(true);
 		}
@@ -145,9 +128,9 @@ public class PlaceHandlerTorchWall
 				&& validTop(world.getBlockState(placeAt.above()), block.defaultBlockState().setValue(WallTorchBlock.FACING, face).setValue(BlockWallTorchSlab.HALF, Half.TOP) ))
 		{
 
-			soundType = block.getSoundType(block.defaultBlockState(), world, pos, event.getPlayer());
+			soundType = block.getSoundType(block.defaultBlockState(), world, pos, event.getEntity());
 			world.playSound(null, pos.getX(), pos.getY(), pos.getZ(), soundType.getPlaceSound(), SoundSource.BLOCKS, soundType.getVolume(), soundType.getPitch() - 0.2F);
-			event.getPlayer().swing(event.getHand());
+			event.getEntity().swing(event.getHand());
 			
 			if (block instanceof SimpleWaterloggedBlock)
 			{
@@ -159,7 +142,7 @@ public class PlaceHandlerTorchWall
 			else
 				world.setBlockAndUpdate(placeAt, block.defaultBlockState().setValue(WallTorchBlock.FACING, face).setValue(BlockWallTorchSlab.HALF, Half.TOP));
 			
-			if(!event.getPlayer().isCreative())
+			if(!event.getEntity().isCreative())
 				held.shrink(1);
 			event.setCanceled(true);
 		}
@@ -178,8 +161,7 @@ public class PlaceHandlerTorchWall
 				|| state.getBlock() instanceof WebBlock
 				|| state.getBlock() instanceof VineBlock
 				|| state.getBlock() instanceof RedstoneWallTorchBlock
-				|| state.getBlock() instanceof StoneButtonBlock
-				|| state.getBlock() instanceof WoodButtonBlock
+				|| state.getBlock() instanceof ButtonBlock
 				)
 			return true;
 		
@@ -196,7 +178,7 @@ public class PlaceHandlerTorchWall
 		double sinPitch = Math.sin(angleY);
 		double cosPitch = Math.cos(angleY);
 		
-		Vector3d directionAngle = new Vector3d (cosPitch * cosYaw, sinPitch, cosPitch * sinYaw);
+		Vec3 directionAngle = new Vec3 (cosPitch * cosYaw, sinPitch, cosPitch * sinYaw);
 		Double yOffset = playerIn.getEyePosition(1).y - (pos.getY() + 0.5);
 		
 		if(face == Direction.NORTH) //Z axis offset by 1

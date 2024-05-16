@@ -8,7 +8,6 @@ import com.endlesnights.torchslabsmod.TorchSlabsMod;
 import com.endlesnights.torchslabsmod.blocks.vanilla.BlockWallTorchSlab;
 import com.endlesnights.torchslabsmod.config.Config;
 import com.endlesnights.torchslabsmod.config.TorchSlabConfig;
-import com.mojang.math.Vector3d;
 
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.FenceBlock;
@@ -27,6 +26,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent.RightClickBlock;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
@@ -51,11 +51,12 @@ private static final HashMap<ResourceLocation, Supplier<Block>> PLACE_ENTRIES = 
 
 	private static void placeLantern(RightClickBlock event, ItemStack held, Block block)
 	{		
+		
 		BlockPos pos = event.getPos();
 		Direction face = event.getFace();
 		BlockPos placeAt = pos.relative(face);
-		Level world = event.getWorld();
-		Player playerIn = event.getPlayer();
+		Level world = event.getLevel();
+		Player playerIn = event.getEntity();
 		SoundType soundType;
 		
 		Config.loadConfig(Config.SERVER, FMLPaths.CONFIGDIR.get().resolve("torchslabmod-server.toml").toString());
@@ -78,11 +79,11 @@ private static final HashMap<ResourceLocation, Supplier<Block>> PLACE_ENTRIES = 
 				world.setBlockAndUpdate(placeAt, block.defaultBlockState().setValue(WallTorchBlock.FACING, face).setValue(BlockWallTorchSlab.HALF, Half.TOP));
 			}
 			
-			soundType = block.getSoundType(block.defaultBlockState(), world, pos, event.getPlayer());
+			soundType = block.getSoundType(block.defaultBlockState(), world, pos, event.getEntity());
 			world.playSound(null, pos.getX(), pos.getY(), pos.getZ(), soundType.getPlaceSound(), SoundSource.BLOCKS, soundType.getVolume(), soundType.getPitch() - 0.2F);
-			event.getPlayer().swing(event.getHand());
+			event.getEntity().swing(event.getHand());
 			
-			if(!event.getPlayer().isCreative())
+			if(!event.getEntity().isCreative())
 				held.shrink(1);
 			event.setCanceled(true);
 		}
@@ -93,13 +94,13 @@ private static final HashMap<ResourceLocation, Supplier<Block>> PLACE_ENTRIES = 
 				&& (world.isEmptyBlock(placeAt) || world.getFluidState(placeAt).getType() == Fluids.WATER || world.getFluidState(placeAt).getType() == Fluids.FLOWING_WATER)
 				&& (!Block.canSupportCenter(world, placeAt.below(), face.getOpposite())) )
 		{
-			soundType = block.getSoundType(block.defaultBlockState(), world, pos, event.getPlayer());
+			soundType = block.getSoundType(block.defaultBlockState(), world, pos, event.getEntity());
 			world.playSound(null, pos.getX(), pos.getY(), pos.getZ(), soundType.getPlaceSound(), SoundSource.BLOCKS, soundType.getVolume(), soundType.getPitch() - 0.2F);
-			event.getPlayer().swing(event.getHand());
+			event.getEntity().swing(event.getHand());
 			
 			world.setBlockAndUpdate(placeAt, block.defaultBlockState().setValue(WallTorchBlock.FACING, face).setValue(BlockWallTorchSlab.HALF, Half.BOTTOM));
 		
-			if(!event.getPlayer().isCreative())
+			if(!event.getEntity().isCreative())
 				held.shrink(1);
 			event.setCanceled(true);
 		}
@@ -110,13 +111,13 @@ private static final HashMap<ResourceLocation, Supplier<Block>> PLACE_ENTRIES = 
 				&& (world.isEmptyBlock(placeAt) || world.getFluidState(placeAt).getType() == Fluids.WATER || world.getFluidState(placeAt).getType() == Fluids.FLOWING_WATER) )
 		{
 
-			soundType = block.getSoundType(block.defaultBlockState(), world, pos, event.getPlayer());
+			soundType = block.getSoundType(block.defaultBlockState(), world, pos, event.getEntity());
 			world.playSound(null, pos.getX(), pos.getY(), pos.getZ(), soundType.getPlaceSound(), SoundSource.BLOCKS, soundType.getVolume(), soundType.getPitch() - 0.2F);
-			event.getPlayer().swing(event.getHand());
+			event.getEntity().swing(event.getHand());
 			
 			world.setBlockAndUpdate(placeAt, block.defaultBlockState().setValue(WallTorchBlock.FACING, face).setValue(BlockWallTorchSlab.HALF, Half.TOP));
 		
-			if(!event.getPlayer().isCreative())
+			if(!event.getEntity().isCreative())
 				held.shrink(1);
 			event.setCanceled(true);
 		}
@@ -133,8 +134,8 @@ private static final HashMap<ResourceLocation, Supplier<Block>> PLACE_ENTRIES = 
 		
 		double sinPitch = Math.sin(angleY);
 		double cosPitch = Math.cos(angleY);
-		
-		Vector3d directionAngle = new Vector3d (cosPitch * cosYaw, sinPitch, cosPitch * sinYaw);
+
+		Vec3 directionAngle = new Vec3 (cosPitch * cosYaw, sinPitch, cosPitch * sinYaw);
 		Double yOffset = playerIn.getEyePosition(1).y - (pos.getY() + 0.5);
 		
 		if(face == Direction.NORTH)

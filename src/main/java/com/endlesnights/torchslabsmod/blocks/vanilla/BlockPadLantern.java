@@ -8,7 +8,6 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
-import net.minecraft.world.level.material.Material;
 import net.minecraft.world.level.pathfinder.PathComputationType;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.HorizontalDirectionalBlock;
@@ -103,7 +102,8 @@ public class BlockPadLantern extends Block
 //		return ifluidstate.getType() == Fluids.WATER || state.getMaterial() == Material.ICE;
 	  FluidState fluidstate = worldIn.getFluidState(pos);
 	  FluidState fluidstate1 = worldIn.getFluidState(pos.above());
-	  return (fluidstate.getType() == Fluids.WATER || state.getMaterial() == Material.ICE) && fluidstate1.getType() == Fluids.EMPTY;		
+		return (fluidstate.getType() == Fluids.WATER) && fluidstate1.getType() == Fluids.EMPTY;
+		//return (fluidstate.getType() == Fluids.WATER || state.getMaterial() == Material.ICE) && fluidstate1.getType() == Fluids.EMPTY;
 	}
 	
 	@Override
